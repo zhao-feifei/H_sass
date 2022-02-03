@@ -6,7 +6,7 @@ import 'nprogress/nprogress.css' // 引入进度条样式
 
 const whiteList = ['/login', '/404'] // 定义白名单  所有不受权限控制的页面
 // 路由的前置守卫
-router.beforeEach(function (to, from, next) {
+router.beforeEach(async (to, from, next) => {
   NProgress.start() // 开启进度条
   //  首先判断有无token
   if (store.getters.token) {
@@ -17,6 +17,10 @@ router.beforeEach(function (to, from, next) {
       next('/') // 跳到主页
       NProgress.done() // 手动强制关闭一次  为了解决 手动切换地址时  进度条的不关闭的问题
     } else {
+      //如果当前vuex中没有用户资料的ID说明没有获取过，此时需要调用获取资料的方法
+      if (!store.getters.userId) {
+        await store.dispatch('user/getUserInfo')
+      }
       next() // 直接放行
     }
   } else {

@@ -1,6 +1,6 @@
 import { getToken, setToken, removeToken, setTimeStamp } from '@/utils/auth'
-import { login } from '@/api/user'
-import store from '..'
+import { login, getUserInfo, getUserDetailById } from '@/api/user'
+import store from 'vuex'
 const state = {
   token: getToken(),
   userInfo: {}
@@ -34,8 +34,12 @@ const actions = {
   async getUserInfo(context) {
     //唯一需要的参数token已经在请求拦截器中注入了
     const result = await getUserInfo()
-    context.commit('setUserInfo', result)
-    return result
+    const baseInfo = await getUserDetailById(result.userId)
+    const baseResult = { ...result, ...baseInfo } // 将两个接口结果合并
+    // 此时已经获取到了用户的基本资料 迫不得已 为了头像再次调用一个接口
+    context.commit('setUserInfo', baseResult) // 提交mutations
+    // 加一个点睛之笔  这里这一步，暂时用不到，但是请注意，这给我们后边会留下伏笔
+    return baseResult
   }
 }
 

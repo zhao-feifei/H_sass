@@ -20,7 +20,7 @@ service.interceptors.request.use(
       if (IsCheckTimeOut()) {
         // 如果它为true表示 过期了
         // token没用了 因为超时了
-        store.dispatch('user/logout') // 登出操作
+        // store.dispatch('user/logout') // 登出操作
         // 跳转到登录页
         router.push('/login')
         return Promise.reject(new Error('token超时了'))
@@ -50,17 +50,17 @@ service.interceptors.response.use(
   },
   (error) => {
     // error 信息 里面 response的对象
-    if (
-      error.response &&
-      error.response.data &&
-      error.response.data.code === 10002
-    ) {
-      // 当等于10002的时候 表示 后端告诉我token超时了
-      store.dispatch('user/logout') // 登出action 删除token
-      router.push('/login')
-    } else {
-      Message.error(error.message) // 提示错误信息
-    }
+    // if (
+    //   error.response &&
+    //   error.response.data &&
+    //   error.response.data.code === 10002
+    // ) {
+    //   // 当等于10002的时候 表示 后端告诉我token超时了
+    //   // store.dispatch('user/logout') // 登出action 删除token
+    //   router.push('/login')
+    // } else {
+    Message.error(error.message) // 提示错误信息
+    // }
     return Promise.reject(error)
   }
 )
