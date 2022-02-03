@@ -40,6 +40,14 @@ const actions = {
     context.commit('setUserInfo', baseResult) // 提交mutations
     // 加一个点睛之笔  这里这一步，暂时用不到，但是请注意，这给我们后边会留下伏笔
     return baseResult
+  },
+  //登出
+  // 登出的action
+  logout(context) {
+    // 删除token
+    context.commit('removeToken') // 不仅仅删除了vuex中的 还删除了缓存中的
+    // 删除用户资料
+    context.commit('removeUserInfo') // 删除用户信息
   }
 }
 
