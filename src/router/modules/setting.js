@@ -11,7 +11,8 @@ export default {
       component: () => import('@/views/setting'),
 
       meta: {
-        title: '设置'
+        title: '设置',
+        icon: 'setting'
       }
     }
   ]

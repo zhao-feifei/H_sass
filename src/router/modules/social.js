@@ -11,7 +11,8 @@ export default {
       component: () => import('@/views/social'),
 
       meta: {
-        title: '工资'
+        title: '社保',
+        icon: 'table'
       }
     }
   ]
