@@ -19,7 +19,12 @@
           />
         </el-tree>
         <!-- 弹层组件 -->
-        <add-dept :show-dialog="showDialog" :tree-node="node" />
+        <add-dept
+          :show-dialog="showDialog"
+          :tree-node="node"
+          @addDepts="getDepartments"
+          :showDialog.sync="showDialog"
+        />
       </el-card>
     </div>
   </div>

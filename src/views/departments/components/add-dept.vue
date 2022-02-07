@@ -3,7 +3,7 @@
   <el-dialog title="新增部门" :visible="showDialog">
     <!-- 表单组件  el-form   label-width设置label的宽度   -->
     <!-- 匿名插槽 -->
-    <el-form label-width="120px" :model="formData" :rules="rules">
+    <el-form ref="deptForm" label-width="120px" :model="formData" :rules="rules">
       <el-form-item label="部门名称" prop="name">
         <el-input v-model="formData.name" style="width: 80%" placeholder="1-50个字符" />
       </el-form-item>
@@ -11,7 +11,19 @@
         <el-input v-model="formData.code" style="width: 80%" placeholder="1-50个字符" />
       </el-form-item>
       <el-form-item label="部门负责人" prop="manager">
-        <el-select v-model="formData.manager" style="width: 80%" placeholder="请选择" />
+        <el-select
+          @focus="getEmployeeSimple"
+          v-model="formData.manager"
+          style="width: 80%"
+          placeholder="请选择"
+        >
+          <el-option
+            v-for="item in peoples"
+            :key="item.id"
+            :label="item.username"
+            :value="item.username"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="部门介绍" prop="introduce">
         <el-input
@@ -27,7 +39,7 @@
     <el-row slot="footer" type="flex" justify="center">
       <!-- 列被分为24 -->
       <el-col :span="6">
-        <el-button type="primary" size="small">确定</el-button>
+        <el-button type="primary" size="small" @click="btnOk">确定</el-button>
         <el-button size="small">取消</el-button>
       </el-col>
     </el-row>
@@ -35,7 +47,8 @@
 </template>
 
 <script>
-import { getDepartments } from '@/api/departments'
+import { getDepartments, addDepartments } from '@/api/departments'
+import { getEmployeeSimple } from '@/api/employees'
 export default {
   props: {
     showDialog: {
@@ -88,7 +101,27 @@ export default {
         manager: [{ required: true, message: '部门负责人不能为空', trigger: 'blur' }],
         introduce: [{ required: true, message: '部门介绍不能为空', trigger: 'blur' },
         { trigger: 'blur', min: 1, max: 300, message: '部门介绍要求1-50个字符' }]
-      }
+      },
+      peoples: []
+    }
+  },
+  methods: {
+    async getEmployeeSimple() {
+      this.peoples = await getEmployeeSimple()
+      // console.log(this.peoples);
+    },
+    //点击提交的接口
+    btnOk() {
+      //校验表单
+      this.$refs.deptForm.validate(async isOk => {
+        if (isOk) {
+          // 调用新增接口 添加父部门的id
+          await addDepartments({ ...this.formData, pid: this.treeNode.id })
+          this.$emit('addDepts')
+          this.$emit('update:showDialog', false)
+        }
+      })
+
     }
   }
 }
