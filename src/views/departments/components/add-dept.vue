@@ -1,6 +1,6 @@
 <template>
   <!-- 新增部门的弹层 -->
-  <el-dialog title="新增部门" :visible="showDialog">
+  <el-dialog title="新增部门" :visible="showDialog" @close="btnCancle">
     <!-- 表单组件  el-form   label-width设置label的宽度   -->
     <!-- 匿名插槽 -->
     <el-form ref="deptForm" label-width="120px" :model="formData" :rules="rules">
@@ -40,7 +40,7 @@
       <!-- 列被分为24 -->
       <el-col :span="6">
         <el-button type="primary" size="small" @click="btnOk">确定</el-button>
-        <el-button size="small">取消</el-button>
+        <el-button size="small" @click="btnCancle">取消</el-button>
       </el-col>
     </el-row>
   </el-dialog>
@@ -110,7 +110,7 @@ export default {
       this.peoples = await getEmployeeSimple()
       // console.log(this.peoples);
     },
-    //点击提交的接口
+    //点击确定的方法
     btnOk() {
       //校验表单
       this.$refs.deptForm.validate(async isOk => {
@@ -122,6 +122,11 @@ export default {
         }
       })
 
+    },
+    //点击取消的方法
+    btnCancle() {
+      this.$emit('update:showDialog', false)
+      this.$refs.deptForm.resetFields() // 重置校验字段
     }
   }
 }
