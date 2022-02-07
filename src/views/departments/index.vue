@@ -29,13 +29,28 @@
             </el-row>
           </el-col>
         </el-row>
+        <!-- 树形组件 -->
+        <el-tree :data="departs" :props="defaultProps" />
       </el-card>
     </div>
   </div>
 </template>
 
 <script>
-export default {}
+export default {
+  data() {
+    return {
+      defaultProps: {
+        label: 'name'
+      },
+      departs: [
+        { name: '总裁办', children: [{ name: '董事会' }] },
+        { name: '行政部' },
+        { name: '人事部' }
+      ]
+    }
+  }
+}
 </script>
 
 <style>
