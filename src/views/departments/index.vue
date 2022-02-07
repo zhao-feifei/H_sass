@@ -11,7 +11,11 @@
           <!-- 说明el-tree里面的这个内容 就是插槽内容 => 填坑内容  => 有多少个节点循环多少次 -->
           <!-- scope-scope 是 tree组件传给每个节点的插槽的内容的数据 -->
           <!-- 顺序一定是 执行slot-scope的赋值 才去执行 props的传值 -->
-          <TreeTools slot-scope="{ data }" :tree-node="data" />
+          <TreeTools
+            slot-scope="{ data }"
+            :tree-node="data"
+            @delDepts="getDepartments"
+          />
         </el-tree>
       </el-card>
     </div>
