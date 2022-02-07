@@ -15,19 +15,24 @@
             slot-scope="{ data }"
             :tree-node="data"
             @delDepts="getDepartments"
+            @addDepts="addDepts"
           />
         </el-tree>
+        <!-- 弹层组件 -->
+        <add-dept :show-dialog="showDialog" />
       </el-card>
     </div>
   </div>
 </template>
 <script>
 import TreeTools from './components/tree-tools.vue'
+import AddDept from './components/add-dept.vue'
 import { getDepartments } from '@/api/departments'
 import { tranListToTreeData } from '@/utils'
 export default {
   components: {
-    TreeTools
+    TreeTools,
+    AddDept
   },
   data() {
     return {
@@ -35,7 +40,8 @@ export default {
       defaultProps: {
         label: 'name'
       },
-      departs: []
+      departs: [],
+      showDialog: false // 显示窗体
     }
   },
   created() {
@@ -46,6 +52,12 @@ export default {
       const result = await getDepartments()
       this.company = { name: result.companyName, manager: '负责人' }
       this.departs = tranListToTreeData(result.depts, '')
+    },
+    //添加部门的方法
+    addDepts(node) {
+      this.showDialog = true // 显示弹层
+      // 因为node是当前的点击的部门， 此时这个部门应该记录下来,
+      this.node = node
     }
   }
 }

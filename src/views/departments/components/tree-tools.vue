@@ -52,6 +52,7 @@ export default {
     operateDepts(type) {
       if (type === 'add') {
         // 添加子部门的操作
+        this.$emit('addDepts', this.treeNode)
       } else if (type === 'edit') {
         //  编辑部门的操作
       } else {
