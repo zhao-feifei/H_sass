@@ -19,7 +19,7 @@
           />
         </el-tree>
         <!-- 弹层组件 -->
-        <add-dept :show-dialog="showDialog" />
+        <add-dept :show-dialog="showDialog" :tree-node="node" />
       </el-card>
     </div>
   </div>
@@ -41,7 +41,8 @@ export default {
         label: 'name'
       },
       departs: [],
-      showDialog: false // 显示窗体
+      showDialog: false, // 显示窗体
+      node: null //记录当前点击的节点
     }
   },
   created() {
@@ -50,10 +51,10 @@ export default {
   methods: {
     async getDepartments() {
       const result = await getDepartments()
-      this.company = { name: result.companyName, manager: '负责人' }
+      this.company = { name: result.companyName, manager: '负责人', id: '' }
       this.departs = tranListToTreeData(result.depts, '')
     },
-    //添加部门的方法
+    // 添加部门的方法
     addDepts(node) {
       this.showDialog = true // 显示弹层
       // 因为node是当前的点击的部门， 此时这个部门应该记录下来,
