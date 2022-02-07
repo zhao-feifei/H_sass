@@ -1,53 +1,46 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
+      <!-- 实现页面的基本布局 -->
       <el-card class="tree-card">
         <!-- 用了一个行列布局 -->
-        <el-row
-          type="flex"
-          justify="space-between"
-          align="middle"
-          style="height: 40px"
-        >
-          <el-col>
-            <span>江苏传智播客教育科技股份有限公司</span>
-          </el-col>
-          <el-col :span="4">
-            <el-row type="flex" justify="end">
-              <!-- 两个内容 -->
-              <el-col>负责人</el-col>
-              <el-col>
-                <!-- 下拉菜单 element -->
-                <el-dropdown>
-                  <span> 操作<i class="el-icon-arrow-down" /> </span>
-                  <!-- 下拉菜单 -->
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item>添加子部门</el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </el-col>
-            </el-row>
-          </el-col>
-        </el-row>
-        <!-- 树形组件 -->
-        <el-tree :data="departs" :props="defaultProps" />
+        <!-- 缺少treeNode -->
+        <TreeTools :tree-node="company" :is-root="true" />
+        <!--放置一个属性   这里的props和我们之前学习的父传子 的props没关系-->
+        <el-tree :data="departs" :props="defaultProps" default-expand-all>
+          <!-- 说明el-tree里面的这个内容 就是插槽内容 => 填坑内容  => 有多少个节点循环多少次 -->
+          <!-- scope-scope 是 tree组件传给每个节点的插槽的内容的数据 -->
+          <!-- 顺序一定是 执行slot-scope的赋值 才去执行 props的传值 -->
+          <TreeTools slot-scope="{ data }" :tree-node="data" />
+        </el-tree>
       </el-card>
     </div>
   </div>
 </template>
-
 <script>
+import TreeTools from './components/tree-tools.vue'
+import { getDepartments } from '@/api/departments'
 export default {
+  components: {
+    TreeTools
+  },
   data() {
     return {
+      company: { name: '', manager: '负责人' },
       defaultProps: {
         label: 'name'
       },
-      departs: [
-        { name: '总裁办', children: [{ name: '董事会' }] },
-        { name: '行政部' },
-        { name: '人事部' }
-      ]
+      departs: []
+    }
+  },
+  created() {
+    this.getDepartments()
+  },
+  methods: {
+    async getDepartments() {
+      const result = await getDepartments()
+      this.company = { name: result.companyName, manager: '负责人' }
+      console.log(result)
     }
   }
 }
