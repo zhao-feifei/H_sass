@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { getDepartments, addDepartments } from '@/api/departments'
+import { getDepartments, addDepartments, getDepartDetail } from '@/api/departments'
 import { getEmployeeSimple } from '@/api/employees'
 export default {
   props: {
@@ -127,6 +127,10 @@ export default {
     btnCancle() {
       this.$emit('update:showDialog', false)
       this.$refs.deptForm.resetFields() // 重置校验字段
+    },
+    //获取部门详情
+    async getDepartDetail(id) {
+      this.formData = await getDepartDetail(id)
     }
   }
 }

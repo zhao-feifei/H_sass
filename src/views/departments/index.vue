@@ -16,10 +16,12 @@
             :tree-node="data"
             @delDepts="getDepartments"
             @addDepts="addDepts"
+            @editDepts="editDepts"
           />
         </el-tree>
         <!-- 弹层组件 -->
         <add-dept
+          ref="addDept"
           :show-dialog="showDialog"
           :tree-node="node"
           @addDepts="getDepartments"
@@ -64,6 +66,12 @@ export default {
       this.showDialog = true // 显示弹层
       // 因为node是当前的点击的部门， 此时这个部门应该记录下来,
       this.node = node
+    },
+    editDepts(node) {
+      this.showDialog = true // 显示弹层
+      this.node = node
+      //调用子组件中的方法
+      this.$refs.addDept.getDepartDetail(node.id)
     }
   }
 }
