@@ -6,7 +6,12 @@
           <el-tab-pane label="角色管理" name="first">
             <!-- 左边的内容 -->
             <el-row style="height: 60px;">
-              <el-button icon="el-icon-plus" size="small" type="primary">新增角色</el-button>
+              <el-button
+                @click="showDialog = true"
+                icon="el-icon-plus"
+                size="small"
+                type="primary"
+              >新增角色</el-button>
             </el-row>
             <el-table :data="list" style="width: 100%" border>
               <el-table-column align="center" type="index" label="序号" width="120" />
@@ -64,7 +69,7 @@
       </el-card>
     </div>
     <!-- 弹层组件 -->
-    <el-dialog title="编辑弹层" :visible="showDialog">
+    <el-dialog title="编辑弹层" :visible="showDialog" @close="btnCancel">
       <el-form ref="roleForm" :rules="rules" label-width="80px">
         <el-form-item prop="name" label="角色名称">
           <el-input v-model="roleForm.name"></el-input>
@@ -76,7 +81,7 @@
       <el-row slot="footer" type="flex" justify="center">
         <el-col :span="6">
           <el-button size="small" @click="btnCancel">取消</el-button>
-          <el-button size="small" type="primary" @click="btnOk">确定</el-button>
+          <el-button size="small" type="primary" @click="btnOK">确定</el-button>
         </el-col>
       </el-row>
     </el-dialog>
@@ -84,7 +89,7 @@
 </template>
 
 <script>
-import { getRoleList, getCompanyInfo, deleteRole, updateRole, getRoleDetail } from '@/api/setting'
+import { getRoleList, getCompanyInfo, deleteRole, updateRole, getRoleDetail, addRole } from '@/api/setting'
 import { mapGetters } from 'vuex';
 
 
@@ -152,22 +157,35 @@ export default {
       this.roleForm = await getRoleDetail(id)
       this.showDialog = true
     },
-    btnCancel() {
 
+    btnCancel() {
+      this.roleForm = {
+        name: '',
+        description: ''
+      }
+      // 移除校验
+      this.$refs.roleForm.resetFields()
+      this.showDialog = false
     },
-    async btnOk() {
+    async btnOK() {
       try {
         await this.$refs.roleForm.validate()
-        await updateRole(this.roleForm)
-
+        // 只有校验通过的情况下 才会执行await的下方内容
+        // roleForm这个对象有id就是编辑 没有id就是新增
+        if (this.roleForm.id) {
+          await updateRole(this.roleForm)
+        } else {
+          // 新增业务
+          await addRole(this.roleForm)
+        }
         // 重新拉取数据
         this.getRoleList()
         this.$message.success('操作成功')
-        this.showDialog = false
+        this.showDialog = false // 关闭弹层  =>  触发el-dialog的事件close事件
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
-    }
+    },
   }
 }
 </script>
