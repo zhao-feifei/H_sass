@@ -15,7 +15,7 @@
               <el-table-column align="center" label="操作">
                 <template slot-scope="{row}">
                   <el-button size="small" type="success">分配权限</el-button>
-                  <el-button size="small" type="primary">编辑</el-button>
+                  <el-button size="small" type="primary" @click="editRole(row.id)">编辑</el-button>
                   <el-button size="small" type="danger" @click="deleteRole(row.id)">删除</el-button>
                 </template>
               </el-table-column>
@@ -63,11 +63,28 @@
         </el-tabs>
       </el-card>
     </div>
+    <!-- 弹层组件 -->
+    <el-dialog title="编辑弹层" :visible="showDialog">
+      <el-form ref="roleForm" :rules="rules" label-width="80px">
+        <el-form-item prop="name" label="角色名称">
+          <el-input v-model="roleForm.name"></el-input>
+        </el-form-item>
+        <el-form-item label="角色描述">
+          <el-input v-model="roleForm.description"></el-input>
+        </el-form-item>
+      </el-form>
+      <el-row slot="footer" type="flex" justify="center">
+        <el-col :span="6">
+          <el-button size="small" @click="btnCancel">取消</el-button>
+          <el-button size="small" type="primary" @click="btnOk">确定</el-button>
+        </el-col>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getRoleList, getCompanyInfo, deleteRole } from '@/api/setting'
+import { getRoleList, getCompanyInfo, deleteRole, updateRole, getRoleDetail } from '@/api/setting'
 import { mapGetters } from 'vuex';
 
 
@@ -83,7 +100,15 @@ export default {
       },
       formData: {
         //公司信息
-      }
+      },
+      showDialog: false,
+      roleForm: {
+        name: '',
+        description: ''
+      },
+      rules: {
+        name: [{ required: true, message: '角色名称不能为空', trigger: 'blur' }]
+      },
     }
   },
   created() {
@@ -119,6 +144,28 @@ export default {
         this.$message.success('删除角色成功')
       } catch (error) {
         console.log(error)
+      }
+    },
+    //编辑角色
+    async editRole(id) {
+
+      this.roleForm = await getRoleDetail(id)
+      this.showDialog = true
+    },
+    btnCancel() {
+
+    },
+    async btnOk() {
+      try {
+        await this.$refs.roleForm.validate()
+        await updateRole(this.roleForm)
+
+        // 重新拉取数据
+        this.getRoleList()
+        this.$message.success('操作成功')
+        this.showDialog = false
+      } catch (error) {
+        console.log(error);
       }
     }
   }
