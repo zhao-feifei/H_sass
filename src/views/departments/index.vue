@@ -52,6 +52,7 @@ export default {
       node: null //记录当前点击的节点
     }
   },
+
   created() {
     this.getDepartments()
   },
