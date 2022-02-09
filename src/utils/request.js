@@ -20,7 +20,7 @@ service.interceptors.request.use(
       if (IsCheckTimeOut()) {
         // 如果它为true表示 过期了
         // token没用了 因为超时了
-        // store.dispatch('user/logout') // 登出操作
+        store.dispatch('user/logout') // 登出操作
         // 跳转到登录页
         router.go('/login')
         return Promise.reject(new Error('token超时了'))
