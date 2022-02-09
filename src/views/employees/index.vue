@@ -10,15 +10,28 @@
         </template>
       </PageTools>
       <!-- 放置表格和分页 -->
-      <el-card v-loading="loading">
+      <el-card>
         <el-table border :data="list">
           <el-table-column label="序号" sortable type="index" />
           <el-table-column label="姓名" sortable prop="username" />
           <el-table-column label="工号" sortable prop="workNumber" />
-          <el-table-column label="聘用形式" sortable prop="formOfEmployment" />
+          <el-table-column
+            prop="formOfEmployment"
+            label="聘用形式"
+            sortable
+            :formatter="formatEmployment"
+          />
           <el-table-column label="部门" sortable prop="departmentName" />
-          <el-table-column label="入职时间" sortable prop="timeOfEntry" />
-          <el-table-column label="账户状态" sortable prop="enableState" />
+          <el-table-column label="入职时间" sortable align="center">
+            <!-- 作用域插槽 -->
+            <template slot-scope="{ row }">{{ row.timeOfEntry | formatDate }}</template>
+          </el-table-column>
+          <el-table-column label="账户状态" align="center" sortable prop="enableState">
+            <template slot-scope="{ row }">
+              <!-- 根据当前状态来确定 是否打开开关 -->
+              <el-switch :value="row.enableState === 1" />
+            </template>
+          </el-table-column>
           <el-table-column label="操作" sortable fixed="right" width="280">
             <template>
               <el-button type="text" size="small">查看</el-button>
@@ -45,6 +58,7 @@
   </div>
 </template>
 <script>
+import EmployeeEnum from '@/api/constant/employees'
 import { getEmployeeList } from '@/api/employees'
 export default {
   data() {
@@ -69,6 +83,12 @@ export default {
     changePage(newPage) {
       this.page.page = newPage;
       this.getEmployeeList()
+    },
+    // 格式化聘用形式
+    formatEmployment(row, column, cellValue, index) {
+      // 要去找 1所对应的值
+      const obj = EmployeeEnum.hireType.find(item => item.id === cellValue)
+      return obj ? obj.value : '未知'
     }
   },
 }

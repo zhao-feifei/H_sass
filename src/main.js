@@ -15,6 +15,7 @@ import router from './router'
 import '@/icons' // icon
 import '@/permission' // permission control
 import Component from '@/components'
+import * as filters from '@/filters' // 引入工具类
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
@@ -29,6 +30,12 @@ Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明
 // Vue.use(ElementUI)
 Vue.use(Component) // 注册自己的插件
+
+// 注册全局的过滤器
+Object.keys(filters).forEach((key) => {
+  // 注册过滤器
+  Vue.filter(key, filters[key])
+})
 Vue.config.productionTip = false
 
 new Vue({
