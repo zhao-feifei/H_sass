@@ -27,3 +27,14 @@ export function delEmployee(id) {
     method: 'delete'
   })
 }
+
+/** **
+ *  新增员工的接口
+ * **/
+export function addEmployee(data) {
+  return request({
+    method: 'post',
+    url: '/sys/user',
+    data
+  })
+}

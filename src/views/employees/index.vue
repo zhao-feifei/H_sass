@@ -6,7 +6,7 @@
         <template slot="after">
           <el-button size="small" type="warning">导入</el-button>
           <el-button size="small" type="danger">导出</el-button>
-          <el-button size="small" type="primary">新增员工</el-button>
+          <el-button size="small" type="primary" @click="showDialog = true">新增员工</el-button>
         </template>
       </PageTools>
       <!-- 放置表格和分页 -->
@@ -55,12 +55,17 @@
         </el-row>
       </el-card>
     </div>
+    <AddDemployee :show-dialog.sync="showDialog"></AddDemployee>
   </div>
 </template>
 <script>
 import EmployeeEnum from '@/api/constant/employees'
+import AddDemployee from './components/add-employee.vue'
 import { getEmployeeList, delEmployee } from '@/api/employees'
 export default {
+  components: {
+    AddDemployee
+  },
   data() {
     return {
       list: [],
@@ -68,7 +73,8 @@ export default {
         page: 1, // 当前页码
         size: 10,
         total: 0 // 总数
-      }
+      },
+      showDialog: false
     }
   },
   created() {
@@ -96,8 +102,7 @@ export default {
         await this.$confirm('您确定删除该员工吗')
         await delEmployee(id)
         this.getEmployeeList()
-        this.$message.success('删
-除员工成功')
+        this.$message.success('删除员工成功')
       } catch (error) {
         console.log(error)
       }
