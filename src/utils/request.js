@@ -22,7 +22,7 @@ service.interceptors.request.use(
         // token没用了 因为超时了
         // store.dispatch('user/logout') // 登出操作
         // 跳转到登录页
-        router.push('/login')
+        router.go('/login')
         return Promise.reject(new Error('token超时了'))
       }
       config.headers['Authorization'] = `Bearer ${store.getters.token}`
