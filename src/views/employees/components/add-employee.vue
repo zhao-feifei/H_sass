@@ -1,7 +1,7 @@
 <template>
-  <el-dialog title="新增员工" :visible="showDialog">
+  <el-dialog title="新增员工" :visible="showDialog" @close="btnCancel">
     <!-- 表单 -->
-    <el-form :model="formData" :rules="rules" label-width="120px">
+    <el-form ref="addEmployee" :model="formData" :rules="rules" label-width="120px">
       <el-form-item label="姓名" prop="username">
         <el-input v-model="formData.username" style="width:50%" placeholder="请输入姓名" />
       </el-form-item>
@@ -50,8 +50,8 @@
     <template v-slot:footer>
       <el-row type="flex" justify="center">
         <el-col :span="6">
-          <el-button size="small">取消</el-button>
-          <el-button type="primary" size="small">确定</el-button>
+          <el-button size="small" @click="btnCancel">取消</el-button>
+          <el-button type="primary" size="small" @click="btnOk">确定</el-button>
         </el-col>
       </el-row>
     </template>
@@ -61,6 +61,7 @@
 <script>
 import EmployeeEnum from '@/api/constant/employees'
 import { getDepartments } from '@/api/departments'
+import { addEmployee } from '@/api/employees'
 import { tranListToTreeData } from '@/utils'
 export default {
   props: {
@@ -100,6 +101,7 @@ export default {
     }
   },
   methods: {
+    //点击部门时候弹出下拉框
     async getDepartments() {
       this.showTree = true
       this.loading = true
@@ -116,6 +118,29 @@ export default {
     selectNode(node) {
       this.formData.departmentName = node.name
       this.showTree = false
+    },
+    async btnOk() {
+      try {
+        this.$refs.addEmployee.validate()
+        await addEmployee(this.formData)
+        this.$parent.getDepartments()
+        this.$parent.showDialog = false
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    btnCancel() {
+      this.formData = {
+        username: '',
+        mobile: '',
+        formOfEmployment: '',
+        workNumber: '',
+        departmentName: '',
+        timeOfEntry: '',
+        correctionTime: ''
+      }
+      this.$refs.addEmployee.resetFields() // 重置校验结果
+      this.$emit('update:showDialog', false)
     }
   },
 
