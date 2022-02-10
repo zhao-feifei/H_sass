@@ -5,6 +5,7 @@
 
 <script>
 import { importEmployee } from '@/api/employees'
+
 export default {
   data() {
     return {
@@ -56,7 +57,7 @@ export default {
         return year + format + month + format + date
       }
       return year + (month < 10 ? '0' + month : month) + (date < 10 ? '0' + date : date)
-    }
+    },
   }
 }
 </script>
