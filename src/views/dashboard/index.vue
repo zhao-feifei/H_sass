@@ -1,6 +1,8 @@
 <template>
   <div class="dashboard-container">
-    <div class="dashboard-text">name: {{ name }}</div>
+    <!-- <div class="dashboard-text">name: {{ name }}</div> -->
+    <div class="dashboard-text">上传图片组件测试</div>
+    <image-upload></image-upload>
   </div>
 </template>
 
