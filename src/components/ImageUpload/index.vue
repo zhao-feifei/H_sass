@@ -10,6 +10,7 @@
       action="#"
       :limit="1"
       :class="{ disabled: fileComputed }"
+      :http-request="upload"
     >
       <i class="el-icon-plus" />
     </el-upload>
@@ -20,7 +21,14 @@
 </template>
 
 <script>
+import COS from 'cos-js-sdk-v5' // 引入腾讯云的包
+//实例化cos对象
+const cos = new COS({
+  SecretId: 'AKIDhDTSAbleFZcPwCAuRoxsZ1GI9nETVM1S',
+  SecretKey: 'KSMUUGm0xd2A1buwgAOL1QZR2MQDjyxe'
+}) // 实例化的包 已经具有了上传的能力 可以上传到该账号里面的存储桶了    
 export default {
+
   data() {
     return {
       fileList: [{ url: 'https://pic40.photophoto.cn/20160710/1155116405444901_b.jpg' }], // 图片地址设置为数组 
@@ -68,6 +76,43 @@ export default {
         return false
       }
       return true
+    },
+    // 自定义上传动作 有个参数 有个file对象，是我们需要上传到腾讯云服务器的内容
+    // 进行上传操作
+    upload(params) {
+      //   console.log(params.file)
+      if (params.file) {
+        // 执行上传操作
+        cos.putObject({
+          Bucket: 'hr-sass1-1303816190', // 存储桶
+          Region: 'ap-shanghai', // 地域
+          Key: params.file.name, // 文件名
+          Body: params.file, // 要上传的文件对象
+          StorageClass: 'STANDARD' // 上传的模式类型 直接默认 标准模式即可
+          // 上传到腾讯云 =》 哪个存储桶 哪个地域的存储桶 文件  格式  名称 回调
+        }, (err, data) => {
+          // data返回数据之后 应该如何处理
+          console.log(err || data)
+          // data中有一个statusCode === 200 的时候说明上传成功
+          if (!err && data.statusCode === 200) {
+            //   此时说明文件上传成功  要获取成功的返回地址
+            // fileList才能显示到上传组件上 此时我们要将fileList中的数据的url地址变成 现在上传成功的地址
+            // 目前虽然是一张图片 但是请注意 我们的fileList是一个数组
+            // 需要知道当前上传成功的是哪一张图片
+            this.fileList = this.fileList.map(item => {
+              // 去找谁的uid等于刚刚记录下来的id
+              if (item.uid === this.currentFileUid) {
+                // 将成功的地址赋值给原来的url属性
+                return { url: 'http://' + data.Location, upload: true }
+                // upload 为true 表示这张图片已经上传完毕 这个属性要为我们后期应用的时候做标记
+                // 保存  => 图片有大有小 => 上传速度有快又慢 =>要根据有没有upload这个标记来决定是否去保存
+              }
+              return item
+            })
+            // 将上传成功的地址 回写到了fileList中 fileList变化  =》 upload组件 就会根据fileList的变化而去渲染视图
+          }
+        })
+      }
     }
   }
 }
