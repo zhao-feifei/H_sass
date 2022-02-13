@@ -14,6 +14,16 @@
         <el-table border :data="list">
           <el-table-column label="序号" sortable type="index" />
           <el-table-column label="姓名" sortable prop="username" />
+          <el-table-column>
+            <template slot-scope="{row}">
+              <img
+                slot="reference"
+                :src="row.staffPhoto"
+                style="border-radius: 50%; width: 100px; height: 100px; padding: 10px"
+                alt
+              />
+            </template>
+          </el-table-column>
           <el-table-column label="工号" sortable prop="workNumber" />
           <el-table-column
             prop="formOfEmployment"

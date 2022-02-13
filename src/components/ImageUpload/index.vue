@@ -36,7 +36,7 @@ export default {
       fileList: [], // 图片地址设置为数组 
       showDialog: false, // 控制显示弹层
       imgUrl: '',
-      showPercent: true, // 默认不显示进度条
+      showPercent: false, // 默认不显示进度条
       percent: 0,
     }
   },
