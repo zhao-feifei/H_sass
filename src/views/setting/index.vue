@@ -112,7 +112,7 @@
 </template>
 
 <script>
-import { getRoleList, getCompanyInfo, deleteRole, updateRole, getRoleDetail, addRole } from '@/api/setting'
+import { getRoleList, getCompanyInfo, deleteRole, updateRole, getRoleDetail, addRole, assignPerm } from '@/api/setting'
 import { mapGetters } from 'vuex';
 import { tranListToTreeData } from '@/utils'
 import { getPermissionList } from '@/api/permission'
