@@ -30,11 +30,16 @@ router.beforeEach(async (to, from, next) => {
           'permission/filterRoutes',
           roles.menus
         )
+        //本来应该拥有权限的页面出现了404，这是因为404的匹配权限放在了静态路由，而动态路由在没有addRoutes之前，找不到对应的地址，就会显示404，所以我们需要将404放置到动态路由的最后
+        router.addRoutes([
+          ...routes,
+          { path: '*', redirect: '/404', hidden: true }
+        ]) // 添加到路由表
         // routes就是筛选得到的动态路由
         // 动态路由 添加到 路由表中 默认的路由表 只有静态路由 没有动态路由
         // addRoutes  必须 用 next(地址) 不能用next()
         router.addRoutes(routes) // 添加动态路由到路由表  铺路
-        console.log(routes, '111111111111111')
+        // console.log(routes, '111111111111111')
         // for (let r of routes) {
         //   router.addRoute(r)
         // }
